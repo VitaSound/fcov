@@ -1,0 +1,6 @@
+build/
+forth-packages/
+.fcov/
+*.swp
+*.swo
+.DS_Store

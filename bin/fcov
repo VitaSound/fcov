@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# bin/fcov — launcher for the fcov coverage tool.
+#
+# Wraps gforth with:
+#   - fcov repo root on fpath  (so `require fcov/...` resolves regardless of cwd)
+#   - tty-safe terminal reset  (no escape leakage when stdout is piped)
+#   - CWD-aware env vars       (FCOV_HOME, FCOV_CMD, FCOV_ARG, FCOV_REST)
+#
+# Suggested ~/.bashrc snippet — one PATH line per tool so each can be
+# moved or removed independently:
+#
+#     export FCOV_HOME="$HOME/fcov"
+#     export PATH="$FCOV_HOME/bin:$PATH"
+#
+# (Mirror the same pattern for fmix and flint — each tool with its own
+# HOME var + PATH line.)
+
+set -e
+
+FCOV_HOME="${FCOV_HOME:-$(cd "$(dirname "$0")/.." && pwd)}"
+export FCOV_HOME
+
+# --- CLI parse ----------------------------------------------------------
+
+cmd="${1:-help}"
+shift || true
+arg="${1:-}"
+rest=""
+if [ -n "$arg" ]; then
+    shift
+    rest="$*"
+fi
+
+export FCOV_CMD="$cmd"
+export FCOV_ARG="$arg"
+export FCOV_REST="$rest"
+
+# --- TTY hygiene --------------------------------------------------------
+# Gforth's bracketed-paste mode leaks a `^[[?2004l` reset when it exits.
+# Only emit our own reset if stdout *is* a tty — otherwise it ends up
+# inside `out=$(fcov ...)` as literal garbage.
+reset_tty() {
+    if [ -t 1 ]; then
+        printf '\033[?2004l' >&2
+    fi
+}
+trap reset_tty EXIT
+
+# --- gforth invocation --------------------------------------------------
+
+exec gforth \
+    -e "s\" $FCOV_HOME\" fpath also-path" \
+    "$FCOV_HOME/fcov.4th"
