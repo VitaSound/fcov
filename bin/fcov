@@ -20,6 +20,11 @@ set -e
 FCOV_HOME="${FCOV_HOME:-$(cd "$(dirname "$0")/.." && pwd)}"
 export FCOV_HOME
 
+# Capture the *real* gforth path now, before `fcov run` rewrites PATH to
+# put .fcov/bin/ on top (which contains a thin gforth shim that re-execs
+# the real gforth with the instrumentation prelude pre-loaded).
+export FCOV_REAL_GFORTH="${FCOV_REAL_GFORTH:-$(command -v gforth || true)}"
+
 # --- CLI parse ----------------------------------------------------------
 
 cmd="${1:-help}"
@@ -34,6 +39,7 @@ fi
 export FCOV_CMD="$cmd"
 export FCOV_ARG="$arg"
 export FCOV_REST="$rest"
+export FCOV_CWD="$PWD"
 
 # --- TTY hygiene --------------------------------------------------------
 # Gforth's bracketed-paste mode leaks a `^[[?2004l` reset when it exits.

@@ -50,10 +50,27 @@ T{ fcov.required-req 2@ nip 0>= -> true }T
 
 \ --- Wiring: fcov util helpers behave -------------------------------------
 
-\ str-dup gives a fresh buffer (caller frees).
-s" hello" fcov.str-dup { dup-a dup-u }
-T{ dup-a dup-u s" hello" compare -> 0 }T
-dup-a free throw
+\ str-dup gives a fresh buffer (caller frees). Use a colon-def around the
+\ check because gforth's locals (`{ … }`) are valid only inside a
+\ definition, and ttester's `T{ … }T` doesn't establish one.
+: fcov.test-str-dup
+    s" hello" fcov.str-dup { dup-a dup-u }
+    dup-a dup-u s" hello" compare
+    dup-a free throw ;
+T{ fcov.test-str-dup -> 0 }T
+
+\ str-concat must concatenate cleanly.
+: fcov.test-str-concat
+    s" foo" s" bar" fcov.str-concat { c-a c-u }
+    c-a c-u s" foobar" compare
+    c-a free throw ;
+T{ fcov.test-str-concat -> 0 }T
+
+\ ends-with? / starts-with? are used by walk + scan and report-format parsing.
+T{ s" foo.4th" s" .4th" fcov.ends-with?   -> true  }T
+T{ s" foo.txt" s" .4th" fcov.ends-with?   -> false }T
+T{ s" --format=lcov" s" --format=" fcov.starts-with? -> true  }T
+T{ s" --foo"        s" --format=" fcov.starts-with? -> false }T
 
 : report
     #ERRORS @ 0= IF
