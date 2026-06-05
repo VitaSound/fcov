@@ -24,20 +24,20 @@ cd ~ && git clone git@github.com:VitaSound/fcov.git
 cd fcov && fmix packages.get
 ```
 
-Добавь в `~/.bashrc` — по одной строке на инструмент, чтобы каждый
-можно было передвинуть/убрать независимо:
+## Настройка shell
+
+В `~/.bashrc` (или `~/.zshrc`) — **две строки только для этого инструмента** (конвенция VitaSound: один инструмент — одна пара строк PATH):
 
 ```bash
-export FCOV_HOME="$HOME/fcov"
+export FCOV_HOME="<install-dir>/fcov"
 export PATH="$FCOV_HOME/bin:$PATH"
 ```
 
-Проверка:
+`<install-dir>` — родитель клонов (`$HOME` при feco в `~/feco`, или например `/opt/vitasound`). Массовая установка: [VitaSound/feco](https://github.com/VitaSound/feco) — `./scripts/clone-ecosystem.sh`. Канон: [feco shell setup](https://github.com/VitaSound/feco/blob/main/docs/shell-setup.ru.md).
 
-```
-$ fcov version
-** (fcov) v0.3.0
-```
+Затем `source ~/.bashrc` и `fcov version`.
+
+Соседние CLI (fmix, flint, fmcp, fhdlgen) — свои пары строк: [feco shell setup](https://github.com/VitaSound/feco/blob/main/docs/shell-setup.ru.md).
 
 ## Быстрый старт
 

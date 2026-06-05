@@ -23,20 +23,20 @@ cd ~ && git clone git@github.com:VitaSound/fcov.git
 cd fcov && fmix packages.get
 ```
 
-Add to `~/.bashrc` — one line per tool so each can move/be removed
-independently:
+## Shell setup
+
+Add to `~/.bashrc` (or `~/.zshrc`) — **two lines for this tool only** (VitaSound convention: one tool per PATH line; do not merge with siblings):
 
 ```bash
-export FCOV_HOME="$HOME/fcov"
+export FCOV_HOME="<install-dir>/fcov"
 export PATH="$FCOV_HOME/bin:$PATH"
 ```
 
-Smoke-test:
+`<install-dir>` is the parent of your clones (`$HOME` if you cloned beside `~/feco`, or e.g. `/opt/vitasound` for an isolated workspace). Bulk install: [VitaSound/feco](https://github.com/VitaSound/feco) — `./scripts/clone-ecosystem.sh`. Canonical rules: [feco shell setup](https://github.com/VitaSound/feco/blob/main/docs/shell-setup.md).
 
-```
-$ fcov version
-** (fcov) v0.3.0
-```
+Then `source ~/.bashrc` and run `fcov version`.
+
+Sibling CLI tools (fmix, flint, fmcp, fhdlgen) each need their own two-line block — see [feco shell setup](https://github.com/VitaSound/feco/blob/main/docs/shell-setup.md).
 
 ## Quick start
 
