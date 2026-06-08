@@ -93,12 +93,26 @@
     swap 100 * swap / fcov.u>str ;
 [THEN]
 
+variable fcov.run-strict?
+variable fcov.fail-under
+variable fcov.last-run-status
+-1 fcov.fail-under !
+0 fcov.run-strict? !
+0 fcov.last-run-status !
+
 [UNDEFINED] fcov.shell-1 [IF]
 \ ( a u -- ) — run a single shell line via `system`, freeing the buffer
 \ afterwards. Convenience wrapper to keep the call sites tidy.
 : fcov.shell-1 ( a u -- )
     2dup system
     drop free throw ;
+[THEN]
+
+[UNDEFINED] fcov.shell-1-status [IF]
+\ ( a u -- status ) — like shell-1 but leaves subprocess exit code.
+: fcov.shell-1-status ( a u -- status )
+    2dup system
+    $? >r drop free throw r> ;
 [THEN]
 
 [UNDEFINED] fcov.mkdir-p [IF]

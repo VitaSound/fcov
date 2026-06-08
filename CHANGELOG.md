@@ -10,6 +10,15 @@ this project adheres to [Semantic Versioning](http://semver.org/).
 Nothing yet. See [doc/ROADMAP.md](doc/ROADMAP.md) for the planned
 1.0.0 (branch coverage) work.
 
+## [0.3.2] - 2026-06-08
+
+### Added
+- `fcov report --fail-under <pct>` — exit 1 when coverage is below threshold.
+- `fcov run [--strict]` — propagate test command exit status.
+
+### Changed
+- `fcov.summary-pct` extracted for reuse in report gate.
+
 ## [0.3.1] - 2026-06-08
 
 ### Added

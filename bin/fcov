@@ -27,19 +27,83 @@ export FCOV_REAL_GFORTH="${FCOV_REAL_GFORTH:-$(command -v gforth || true)}"
 
 # --- CLI parse ----------------------------------------------------------
 
+FCOV_RUN_STRICT=0
+FCOV_FAIL_UNDER=""
+
 cmd="${1:-help}"
 shift || true
-arg="${1:-}"
+
+arg=""
 rest=""
-if [ -n "$arg" ]; then
-    shift
-    rest="$*"
-fi
+
+case "$cmd" in
+    run)
+        while [ $# -gt 0 ]; do
+            case "$1" in
+                --strict) FCOV_RUN_STRICT=1; shift ;;
+                --) shift; break ;;
+                --*)
+                    echo "[ERROR] Unknown run flag: $1" >&2
+                    exit 1
+                    ;;
+                *) break ;;
+            esac
+        done
+        if [ $# -gt 0 ]; then
+            arg=$1
+            shift
+            rest="$*"
+        fi
+        ;;
+    report)
+        while [ $# -gt 0 ]; do
+            case "$1" in
+                --fail-under)
+                    shift
+                    [ $# -gt 0 ] || { echo "[ERROR] --fail-under requires a number" >&2; exit 1; }
+                    FCOV_FAIL_UNDER=$1
+                    shift
+                    ;;
+                --fail-under=*)
+                    FCOV_FAIL_UNDER=${1#--fail-under=}
+                    shift
+                    ;;
+                --format)
+                    shift
+                    [ $# -gt 0 ] || { echo "[ERROR] --format requires a value" >&2; exit 1; }
+                    arg=--format
+                    rest=$1
+                    shift
+                    ;;
+                --format=*)
+                    arg=--format
+                    rest=${1#--format=}
+                    shift
+                    ;;
+                --) shift; break ;;
+                --*)
+                    echo "[ERROR] Unknown report flag: $1" >&2
+                    exit 1
+                    ;;
+                *) break ;;
+            esac
+        done
+        ;;
+    *)
+        arg="${1:-}"
+        if [ -n "$arg" ]; then
+            shift
+            rest="$*"
+        fi
+        ;;
+esac
 
 export FCOV_CMD="$cmd"
 export FCOV_ARG="$arg"
 export FCOV_REST="$rest"
 export FCOV_CWD="$PWD"
+export FCOV_RUN_STRICT
+export FCOV_FAIL_UNDER
 
 # --- TTY hygiene --------------------------------------------------------
 # Gforth's bracketed-paste mode leaks a `^[[?2004l` reset when it exits.

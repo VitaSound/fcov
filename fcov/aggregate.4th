@@ -275,3 +275,6 @@ variable fcov.calls-first?
 
 : fcov.summary-total    ( -- n )  fcov.cov-words-total   @ ;
 : fcov.summary-covered  ( -- n )  fcov.cov-words-covered @ ;
+: fcov.summary-pct ( -- n )
+    fcov.summary-total dup 0= IF drop 0 EXIT THEN
+    fcov.summary-covered swap 100 * swap / ;

@@ -11,7 +11,24 @@ s" " fcov.arg 2!
 s" " fcov.rest 2!
 s" " fcov.cwd 2!
 
+: fcov.read-run-flags
+    0 fcov.run-strict? !
+    -1 fcov.fail-under !
+    s" FCOV_RUN_STRICT" getenv 2dup nip IF
+        2dup nip IF
+            2dup s" 1" compare 0= IF -1 fcov.run-strict? ! THEN
+            2drop
+        ELSE 2drop THEN
+    ELSE 2drop THEN
+    s" FCOV_FAIL_UNDER" getenv 2dup nip IF
+        2dup nip IF
+            2dup evaluate fcov.fail-under !
+            2drop
+        ELSE 2drop THEN
+    ELSE 2drop THEN ;
+
 : fcov.read-args
+    fcov.read-run-flags
     s" FCOV_CMD" getenv 2dup nip IF
         fcov.str-dup fcov.cmd 2!
     ELSE
@@ -144,7 +161,16 @@ s" " fcov.cwd 2!
     s"  word definition(s); running: " type tc-a tc-u type cr
 
     \ ---- exec the user's test command ----
-    s" bash .fcov/_run.sh" fcov.str-dup fcov.shell-1
+    s" bash .fcov/_run.sh" fcov.str-dup fcov.shell-1-status fcov.last-run-status !
+    fcov.run-strict? @ fcov.last-run-status @ 0<> and IF
+        cr s" [ERROR] Test command exited with status " type
+        fcov.last-run-status @ . cr
+        p-a p-u drop free throw
+        c-a c-u drop free throw
+        s-a s-u drop free throw
+        tc-a tc-u drop free throw
+        1 (bye)
+    THEN
 
     \ ---- aggregate shards ----
     fcov.hits-clear
@@ -176,18 +202,27 @@ s" " fcov.cwd 2!
     THEN
     s" console" ;
 
+: fcov.report-check-fail-under ( -- )
+    fcov.fail-under @ 0< IF EXIT THEN
+    fcov.summary-pct fcov.fail-under @ < IF
+        cr s" [ERROR] Coverage " type fcov.summary-pct .
+        s" % is below threshold " type fcov.fail-under @ . s" %" type cr
+        1 (bye)
+    THEN ;
+
 : fcov.report
     fcov.collect-defs
     fcov.hits-clear
     s" .fcov/calls" fcov.ingest-calls-dir
     fcov.report-format { fa fu }
-    fa fu s" json"    compare 0= IF fcov.report-json     EXIT THEN
-    fa fu s" html"    compare 0= IF fcov.report-html     EXIT THEN
-    fa fu s" lcov"    compare 0= IF fcov.report-lcov     EXIT THEN
-    fa fu s" console" compare 0= IF fcov.report-console  EXIT THEN
+    fa fu s" json"    compare 0= IF fcov.report-json     fcov.report-check-fail-under EXIT THEN
+    fa fu s" html"    compare 0= IF fcov.report-html     fcov.report-check-fail-under EXIT THEN
+    fa fu s" lcov"    compare 0= IF fcov.report-lcov     fcov.report-check-fail-under EXIT THEN
+    fa fu s" console" compare 0= IF fcov.report-console  fcov.report-check-fail-under EXIT THEN
     cr s" [WARN] unknown --format `" type fa fu type
     s" `; defaulting to console." type cr
-    fcov.report-console ;
+    fcov.report-console
+    fcov.report-check-fail-under ;
 
 \ --- help -----------------------------------------------------------------
 
@@ -196,9 +231,9 @@ s" " fcov.cwd 2!
     s"  — coverage collector for Forth source trees" type cr
     s" Usage: fcov <command> [args]" type cr
     s" Commands:" type cr
-    s"    run [<test-cmd>]                          - Run tests under instrumentation" type cr
+    s"    run [<test-cmd>] [--strict]               - Run tests under instrumentation" type cr
     s"                                                (default: `fmix test`)." type cr
-    s"    report [--format <fmt>]                   - Show coverage report from last run." type cr
+    s"    report [--format <fmt>] [--fail-under N]  - Show coverage report from last run." type cr
     s"    clean                                     - Remove .fcov/ artefacts." type cr
     s"    version                                   - Show fcov version." type cr
     s"    help                                      - Show this help." type cr cr
