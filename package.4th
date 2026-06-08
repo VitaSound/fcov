@@ -5,7 +5,7 @@
 \ library dependencies last.
 forth-package
     key-value name fcov
-    key-value version 0.3.0
+    key-value version 0.3.1
     key-value description Coverage collector for Forth source trees (definition + call coverage; console, JSON, LCOV and static HTML reports)
     key-value license COPL
     key-value main fcov.4th
@@ -21,5 +21,5 @@ forth-package
     key-list fcov-exclude tests/fixtures
     key-list dependencies fsemver git https://github.com/VitaSound/fsemver tag 0.1.0
     key-list dependencies fenum   git https://github.com/VitaSound/fenum   tag 0.1.1
-    key-list dependencies ttester git https://github.com/VitaSound/ttester tag 1.2.0
+    key-list dependencies ttester git https://github.com/VitaSound/ttester tag 1.2.1
 end-forth-package

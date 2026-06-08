@@ -284,6 +284,13 @@ the captured pair into a side-table along with the counter address.
    coverage-main.json --against HEAD` to show «coverage delta». Likely
    1.0.0+, after we have stable JSON schemas.
 
+## Future / debt (ecosystem)
+
+- **JSON emitters:** when fcov JSON report stabilizes (0.2.0+), migrate
+  `fcov.json-*` helpers in `fcov/collect.4th` to shared
+  [fjson](https://github.com/VitaSound/fjson) (`fjson.emit`,
+  `fjson.quoted`, …). No fcov code change until then — track here only.
+
 ## Non-goals
 
 - **Real-time coverage display** (live dashboard during `fcov run`).

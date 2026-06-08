@@ -1,4 +1,7 @@
 # fcov
+[![License](https://img.shields.io/badge/License-COPL-red.svg)](https://raw.githubusercontent.com/VitaSound/fcov/refs/heads/main/LICENSE)
+[![Ver](https://img.shields.io/badge/Ver-0.3.1-green.svg)](https://github.com/VitaSound/fcov/releases/tag/0.3.1)
+[![Cov](https://img.shields.io/badge/Cov-81%25-green.svg)](https://github.com/VitaSound/fcov/actions/workflows/ci.yml)
 
 **Coverage collector for Forth source trees.** Runs your tests under
 instrumentation and reports which `:`-defined words were actually

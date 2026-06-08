@@ -15,8 +15,8 @@
     fpath also-path ;
 fcov.test-setup-fpath
 
-s" forth-packages/ttester/1.2.0/ttester.4th" included
-s" forth-packages/ttester/1.2.0/ttester-ext.4th" included
+s" forth-packages/ttester/1.2.1/ttester.4th" included
+s" forth-packages/ttester/1.2.1/ttester-ext.4th" included
 
 require fcov/util.4th
 

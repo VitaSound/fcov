@@ -10,6 +10,20 @@ this project adheres to [Semantic Versioning](http://semver.org/).
 Nothing yet. See [doc/ROADMAP.md](doc/ROADMAP.md) for the planned
 1.0.0 (branch coverage) work.
 
+## [0.3.1] - 2026-06-08
+
+### Added
+- Split `fcov/bootstrap.4th` and `fcov/commands.4th` from monolithic loader;
+  `tests/fcov_integration_test.4th`, `fcov_walk_scan_test.4th`,
+  `fcov_reports_test.4th`, `fcov_commands_test.4th` — raises fcov baseline
+  from ~38 % to ~81 % under `fcov run fmix test`.
+- GitHub Actions CI (Gforth 0.7.9, fmix 0.7.2, `fmix test`).
+- Cov badge in `README.md` / `README.ru.md`.
+
+### Changed
+- Pin ttester 1.2.1 in `package.4th`.
+- ROADMAP: note fjson 100 % coverage as ecosystem reference.
+
 ## [0.3.0] - 2026-05-24
 
 JSON and HTML reporters land, completing the four output formats
