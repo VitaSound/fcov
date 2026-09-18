@@ -262,6 +262,11 @@ Integration-скрипт покрывает:
    повышай по SemVer: **PATCH** для багфикса, **MINOR** для нового
    функционала, **MAJOR** для несовместимого изменения API.
 
+## Экосистема VitaSound
+
+- [feco](https://github.com/VitaSound/feco) — каталог Forth-тулчейна: версии, покрытие, установка всех репозиториев
+- [MIT](https://github.com/VitaSound/MIT) — инженерная методология: декомпозиция задач и уровни аппаратно-программного стека
+
 ## Лицензия
 
 [COPL](LICENSE) — Communist Public License. Используйте свободно,
