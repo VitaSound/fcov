@@ -1,0 +1,22 @@
+schema: spec-driven
+
+context: |
+  Language: Russian
+  All artifacts must be written in Russian.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  Проект: fcov — сбор покрытия Forth-кода и отчёты (console, JSON, LCOV, HTML), часть экосистемы VitaSound feco.
+  Стек: Gforth, правила frules, package.4th. Дорожная карта: doc/ROADMAP.md.
+  Используется в fmix check, MCP vitasound-forth (fcov_run, fcov_report) и для Cov-бейджей в README репозиториев.
+  Проверка: fmix test, flint, fcov run && fcov report.
+
+rules:
+  specs:
+    - Форматы отчётов (JSON, LCOV) — внешний контракт; изменения формулировать как MODIFIED с указанием совместимости
+  tasks:
+    - Каждое требование покрывать тестом в tests/*_test.4th
+
+operations:
+  apply:
+    guidance:
+      - Перед завершением прогонять fmix check; обновлять CHANGELOG.md

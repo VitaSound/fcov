@@ -266,6 +266,7 @@ Integration-скрипт покрывает:
 
 - [feco](https://github.com/VitaSound/feco) — каталог Forth-тулчейна: версии, покрытие, установка всех репозиториев
 - [MIT](https://github.com/VitaSound/MIT) — инженерная методология: декомпозиция задач и уровни аппаратно-программного стека
+- [OpenSpec](https://github.com/Fission-AI/OpenSpec) — изменения планируются в [`openspec/`](openspec/) (`/opsx-propose` в Cursor); контекст: [`openspec/config.yaml`](openspec/config.yaml)
 
 ## Лицензия
 
