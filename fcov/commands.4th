@@ -262,14 +262,32 @@ s" " fcov.cwd 2!
     s" rm -rf .fcov/" fcov.str-dup fcov.shell-1
     cr s" * fcov: removed .fcov/ (if it existed)." type cr ;
 
+\ Look up sd in wid; if found, drop sd, execute the word, return true.
+\ Otherwise leave any1+sd and return false.
+: obey-wordlist? ( any1 sd wid -- any2 true | any1 sd false )
+    >r 2dup r> search-wordlist IF
+        nip nip execute true EXIT
+    THEN false
+;
+
+wordlist constant fcov.commands
+get-current fcov.commands set-current
+    synonym run     fcov.run
+    synonym report  fcov.report
+    synonym clean   fcov.clean
+    synonym version fcov.version
+    synonym help    fcov.help
+set-current
+
+: fcov.dispatch-command ( sd.command -- )
+    dup 0= IF 2drop fcov.help EXIT THEN
+    fcov.commands obey-wordlist? IF EXIT THEN
+    cr s" Unknown command: " type type cr
+    fcov.help
+    1 (bye)
+;
+
 : fcov-dispatch
     fcov.read-args
     fcov.check-required-version
-    fcov.cmd 2@ s" run"     compare 0= IF fcov.run     EXIT THEN
-    fcov.cmd 2@ s" report"  compare 0= IF fcov.report  EXIT THEN
-    fcov.cmd 2@ s" clean"   compare 0= IF fcov.clean   EXIT THEN
-    fcov.cmd 2@ s" version" compare 0= IF fcov.version EXIT THEN
-    fcov.cmd 2@ s" help"    compare 0= IF fcov.help    EXIT THEN
-    cr s" Unknown command: " type fcov.cmd 2@ type cr
-    fcov.help
-    1 (bye) ;
+    fcov.cmd 2@ fcov.dispatch-command ;

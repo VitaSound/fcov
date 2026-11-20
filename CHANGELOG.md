@@ -10,6 +10,12 @@ this project adheres to [Semantic Versioning](http://semver.org/).
 Nothing yet. See [doc/ROADMAP.md](doc/ROADMAP.md) for the planned
 1.0.0 (branch coverage) work.
 
+## [0.3.3] - 2026-11-21
+
+### Changed
+- Dispatch CLI commands via a dedicated wordlist (`synonym` + `search-wordlist`)
+  instead of a `compare` IF chain in `fcov-dispatch`.
+
 ## [0.3.2] - 2026-06-08
 
 ### Added
