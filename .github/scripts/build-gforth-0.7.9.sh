@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PREFIX="${HOME}/opt/gforth-0.7.9"
+PREFIX="${GFORTH_PREFIX:-/opt/gforth-0.7.9}"
 GFORTH_TAG="0.7.9_20250101"
 GNU_TARBALL="https://ftp.gnu.org/gnu/gforth/gforth-0.7.9.tar.gz"
 GIT_TARBALL="https://github.com/forthy42/gforth/archive/refs/tags/${GFORTH_TAG}.tar.gz"
 
-if [[ -x "${PREFIX}/bin/gforth" ]]; then
-  "${PREFIX}/bin/gforth" --version 2>&1 | grep -q '0.7.9'
+if [[ -x "${PREFIX}/bin/gforth" ]] \
+  && "${PREFIX}/bin/gforth" --version 2>&1 | grep -q '0.7.9' \
+  && "${PREFIX}/bin/gforth" -e 'bye' </dev/null >/dev/null 2>&1; then
   echo "GForth 0.7.9 already installed at ${PREFIX}"
-  echo "${PREFIX}/bin" >> "${GITHUB_PATH}"
+  if [[ -n "${GITHUB_PATH:-}" ]]; then
+    echo "${PREFIX}/bin" >> "${GITHUB_PATH}"
+  fi
   exit 0
 fi
 
@@ -51,9 +54,15 @@ if [[ ! -f configure ]]; then
   ./autogen.sh
 fi
 ./configure --prefix="${PREFIX}"
-make -j"$(nproc)"
-make install
+# Avoid flaky gforth-fast coretests under CI; toolchain only needs `gforth`.
+export TERM=dumb
+make -j"$(nproc)" gforth
+sudo mkdir -p "$(dirname "${PREFIX}")"
+sudo make install
 
 "${PREFIX}/bin/gforth" --version 2>&1 | grep -q '0.7.9'
+"${PREFIX}/bin/gforth" -e 'bye' </dev/null >/dev/null
 echo "Installed: $("${PREFIX}/bin/gforth" --version 2>&1 | head -1)"
-echo "${PREFIX}/bin" >> "${GITHUB_PATH}"
+if [[ -n "${GITHUB_PATH:-}" ]]; then
+  echo "${PREFIX}/bin" >> "${GITHUB_PATH}"
+fi

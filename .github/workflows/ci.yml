@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [master, main]
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -20,25 +24,23 @@ jobs:
           ref: 0.7.2
           path: fmix
 
-      - name: Cache GForth 0.7.9
-        id: cache-gforth
-        uses: actions/cache@v4
-        with:
-          path: ~/opt/gforth-0.7.9
-          key: gforth-0.7.9-${{ runner.os }}-v2
+      # No actions/cache for /opt — prefix is hard-coded in the engine;
+      # GHCR pull (~20MB) is fast enough without a host-side cache.
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-      - name: Build and install GForth 0.7.9
-        run: bash .github/scripts/build-gforth-0.7.9.sh
+      - name: Install GForth 0.7.9 (GHCR, else source build)
+        run: bash .github/scripts/fetch-gforth-0.7.9.sh
 
       - name: Verify GForth version
         run: gforth --version 2>&1 | grep -F '0.7.9'
 
       - name: fmix packages.get
         run: |
-          export PATH="${{ github.workspace }}/fmix/bin:${PATH}"
+          export PATH="${{ github.workspace }}/fmix/bin:/opt/gforth-0.7.9/bin:${PATH}"
           fmix packages.get
 
       - name: fmix test
         run: |
-          export PATH="${{ github.workspace }}/fmix/bin:${PATH}"
+          export PATH="${{ github.workspace }}/fmix/bin:/opt/gforth-0.7.9/bin:${PATH}"
           fmix test
